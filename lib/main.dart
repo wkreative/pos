@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pos/PosRes.dart';
 
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -18,15 +20,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-home:   ValorScreen(),
+      home: ValorScreen(),
     );
   }
 }
-
 
 class ValorScreen extends StatefulWidget {
   const ValorScreen({super.key});
@@ -82,19 +82,6 @@ class _ValorScreenState extends State<ValorScreen> {
                         child: const Text('Submit'),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            log("------ipAddress----" +
-                                ipAddress.text.toString());
-                            getConnected2(ipAddress.text.toString());
-                          }
-                        },
-                        child: const Text('Submit2'),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -106,104 +93,84 @@ class _ValorScreenState extends State<ValorScreen> {
   }
 
   getConnected(String url) async {
-    final wsUrl = Uri.parse("ws://"+url+":5000");
-    //final wsUrl = Uri.parse("wss://ws-feed.pro.coinbase.com");
-    final channel = WebSocketChannel.connect(wsUrl);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(wsUrl.toString())),
-    );
-    await channel.ready;
-    channel.sink.add(jsonEncode({
-    "TRAN_MODE": "1",
-    "TRAN_CODE": "1",
-    "AMOUNT": "500",
-    "TIP_ENTRY": "1",
-    "SIGNATURE": "1",
-    "PAPER_RECEIPT": "2",
-    "MOBILE_ENTRY": "1",
-    "MOBILE_NUMBER": "1234567890",
-    "VAS_LABEL1": "INVOICE_NO",
-    "VAS_DATA1": "12345",
-    "VAS_LABEL2": "SERIAL_NO",
-    "VAS_DATA2": "987654321"
-    }));
-
-    /* channel.sink.add(
-      jsonEncode(
-        CoinbaseRequest(
-          'subscribe',
-          [
-            {
-              "name": "ticker",
-              "product_ids": ['BTC-EUR']
-            }
-          ],
-        ).toJson(),
-      ),
-    );*/
-    channel.stream.listen((message) {
-      log("WebSocketChannelWebSocketChannel" + message
-        ..toString());
-
-      /* channel.sink.add({"AMOUNT":"500"
-            ,"TIP_ENTRY":"1"
-            ,"SIGNATURE":"1"
-            ,"PAPER_RECEIPT":"2"
-            ,"MOBILE_ENTRY":"1"
-            ,"MOBILE_NUMBER":"1234567890"
-            ,"VAS_LABEL1":"INVOICE_NO"
-            ,"VAS_DATA1":"12345"
-            ,"VAS_LABEL2":"SERIAL_NO"
-            ,"VAS_DATA2":"987654321"});*/
-      //channel.sink.close();
+    try {
+      final wsUrl = Uri.parse("ws://" + url + ":5000");
+      //final wsUrl = Uri.parse("wss://ws-feed.pro.coinbase.com");
+      final channel = WebSocketChannel.connect(wsUrl);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message.toString())),
+        SnackBar(content: Text('Connecting...')),
       );
-    });
-  }
-  getConnected2(String url) async {
-    final wsUrl = Uri.parse("wss://"+url+":5000");
-    //  final wsUrl = Uri.parse("wss://ws-feed.pro.coinbase.com");
-    final channel = WebSocketChannel.connect(wsUrl);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(wsUrl.toString())),
-    );
-    await channel.ready;
-    channel.sink.add({
-      "TRAN_MODE": "1",
-      "TRAN_CODE": "1",
-      "AMOUNT": "500",
-      "TIP_ENTRY": "1",
-      "SIGNATURE": "1",
-      "PAPER_RECEIPT": "2",
-      "MOBILE_ENTRY": "1",
-      "MOBILE_NUMBER": "1234567890",
-      "VAS_LABEL1": "INVOICE_NO",
-      "VAS_DATA1": "12345",
-      "VAS_LABEL2": "SERIAL_NO",
-      "VAS_DATA2": "987654321"
-    });
+      await channel.ready;
 
-    /* channel.sink.add(
-      jsonEncode(
-        CoinbaseRequest(
-          'subscribe',
-          [
-            {
-              "name": "ticker",
-              "product_ids": ['BTC-EUR']
-            }
-          ],
-        ).toJson(),
-      ),
-    );*/
-    channel.stream.listen((message) {
-      log("WebSocketChannelWebSocketChannel" + message
-        ..toString());
+      /*     log("onErroronError---$error"
+            ..toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                  error.toString(),
+                  selectionColor: Colors.white,
+                ),
+                backgroundColor: Colors.red),
+          );*/
+      channel.sink.add(jsonEncode({
+        "TRAN_MODE": "1",
+        "TRAN_CODE": "1",
+        "AMOUNT": "500",
+        "TIP_ENTRY": "1",
+        "SIGNATURE": "1",
+        "PAPER_RECEIPT": "0",
+        "MOBILE_ENTRY": "1",
+        "MOBILE_NUMBER": "1234567890",
+        "VAS_LABEL1": "INVOICE_NO",
+        "VAS_DATA1": "12345",
+        "VAS_LABEL2": "SERIAL_NO",
+        "VAS_DATA2": "987654321"
+      }));
+      channel.stream.listen((message) {
+        log("WebSocketChannelWebSocketChannel" + message
+          ..toString());
+
+        var data = PosRes.fromJson(jsonDecode(message));
+        if (data.code != null && data.code == "0") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                  message.toString(),
+                  selectionColor: Colors.white,
+                ),
+                backgroundColor: Colors.green),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                  message.toString(),
+                  selectionColor: Colors.white,
+                ),
+                backgroundColor: Colors.red),
+          );
+        }
+      }, onError: (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                "Something Went Wrong",
+                selectionColor: Colors.white,
+              ),
+              backgroundColor: Colors.red),
+        );
+      });
+    } catch (e) {
+      log("WebSocketChannelWebSocketChannel$e");
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message.toString())),
+        SnackBar(
+            content: Text(
+              "Something Went Wrong",
+              selectionColor: Colors.white,
+            ),
+            backgroundColor: Colors.red),
       );
-    });
+    }
   }
 }
-
