@@ -111,14 +111,16 @@ class _ValorScreenState extends State<ValorScreen> {
                   selectionColor: Colors.white,
                 ),
                 backgroundColor: Colors.red),
-          );WebSocketChannelWebSocketChannelHttpException: Connection closed before full header was received, uri =*/
+          );WebSocketChannelWebSocketChannelHttpException: Connection closed before full header was received, uri ={"STATE":0,"STAN_ID":"000010","AMOUNT":"10","PARTIAL":"0","ISSUER":"MASTERCARD","MASKED_PAN":"5126********0670","RRN":"405007564554","CODE":"055215","AUTH_RSP_TEXT":"APPROVE","DATE":"19022024 07:52:09","TRAN_NO":"2","BATCH_NO":"2","AID":"A0000000041010","SERIAL_NO":"141234200184","TRAN_TYPE":"CREDIT","TRAN_METHOD":"SALE","ENTRY_MODE":"CLESS","EXPIRY_DATE":"**\/**","TXN_ID":"2256887734","STATE_TAX":"1","TOTAL_AMOUNT":"11"} */
+
+       */
       channel.sink.add(jsonEncode({
         "TRAN_MODE": "1",
         "TRAN_CODE": "1",
         "AMOUNT": "10",
         "TIP_ENTRY": "0",
         "SIGNATURE": "1",
-        "PAPER_RECEIPT": "0",
+        "PAPER_RECEIPT": "2",
         "MOBILE_ENTRY": "0",
         "MOBILE_NUMBER": "1234567890",
         "VAS_LABEL1": "INVOICE_NO",
