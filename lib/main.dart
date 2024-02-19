@@ -117,10 +117,10 @@ class _ValorScreenState extends State<ValorScreen> {
       channel.sink.add(jsonEncode({
         "TRAN_MODE": "1",
         "TRAN_CODE": "1",
-        "AMOUNT": "10",
+        "AMOUNT": "100",
         "TIP_ENTRY": "0",
         "SIGNATURE": "1",
-        "PAPER_RECEIPT": "2",
+        "PAPER_RECEIPT": "1",
         "MOBILE_ENTRY": "0",
         "MOBILE_NUMBER": "1234567890",
         "VAS_LABEL1": "INVOICE_NO",
