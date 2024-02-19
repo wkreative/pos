@@ -111,15 +111,15 @@ class _ValorScreenState extends State<ValorScreen> {
                   selectionColor: Colors.white,
                 ),
                 backgroundColor: Colors.red),
-          );*/
+          );WebSocketChannelWebSocketChannelHttpException: Connection closed before full header was received, uri =*/
       channel.sink.add(jsonEncode({
         "TRAN_MODE": "1",
         "TRAN_CODE": "1",
-        "AMOUNT": "500",
-        "TIP_ENTRY": "1",
+        "AMOUNT": "10",
+        "TIP_ENTRY": "0",
         "SIGNATURE": "1",
         "PAPER_RECEIPT": "0",
-        "MOBILE_ENTRY": "1",
+        "MOBILE_ENTRY": "0",
         "MOBILE_NUMBER": "1234567890",
         "VAS_LABEL1": "INVOICE_NO",
         "VAS_DATA1": "12345",
@@ -130,8 +130,8 @@ class _ValorScreenState extends State<ValorScreen> {
         log("WebSocketChannelWebSocketChannel" + message
           ..toString());
 
-        var data = PosRes.fromJson(jsonDecode(message));
-        if (data.code != null && data.code == "0") {
+     var jsonn =   jsonDecode(message);
+        if (jsonn['STATE'] != null && jsonn['STATE'] == "0") {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text(
@@ -140,7 +140,9 @@ class _ValorScreenState extends State<ValorScreen> {
                 ),
                 backgroundColor: Colors.green),
           );
+          channel.sink.close();
         } else {
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text(
@@ -150,6 +152,7 @@ class _ValorScreenState extends State<ValorScreen> {
                 backgroundColor: Colors.red),
           );
         }
+        channel.sink.close();
       }, onError: (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -159,6 +162,7 @@ class _ValorScreenState extends State<ValorScreen> {
               ),
               backgroundColor: Colors.red),
         );
+        channel.sink.close();
       });
     } catch (e) {
       log("WebSocketChannelWebSocketChannel$e");
